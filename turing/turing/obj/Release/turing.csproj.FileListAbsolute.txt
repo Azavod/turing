@@ -1,0 +1,9 @@
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Release\turing.exe.config
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Release\turing.exe
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Release\turing.pdb
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.csprojResolveAssemblyReference.cache
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.Form1.resources
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.Properties.Resources.resources
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.csproj.GenerateResource.Cache
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.exe
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.pdb
