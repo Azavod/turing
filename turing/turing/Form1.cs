@@ -64,8 +64,8 @@ namespace turing
                     lenta.Rows[2].Cells[i].Value = sim;
                 else
                 {
-                    AddData (" ", nach + i);
-                    lenta.Rows[2].Cells[i].Value = " ";
+                    AddData ("_", nach + i);
+                    lenta.Rows[2].Cells[i].Value = "_";
                 }
             }
 
@@ -144,8 +144,7 @@ namespace turing
                 if (cValue == null) return;
             
             if (!(cValue.Length == 0 || cValue.Length == 4))
-                { cell.Value = ""; return; }
-            // if ()    
+                { cell.Value = ""; return; }   
 
         }
 
@@ -158,9 +157,10 @@ namespace turing
             var cell = lenta.Rows[x].Cells[y];
             var cValue = (string)cell.Value;
 
-            if (cValue.Length > 1) cell.Value = " ";
+            if (cValue == null) cValue = "_";
+            if (cValue.Length > 1) cell.Value = "_";
                 else
-                if (!ABC.Contains(cValue)) cell.Value = " ";
+                if (!ABC.Contains(cValue)) cell.Value = "_";
 
             AddData (cValue, begn + y);
         }
@@ -233,8 +233,9 @@ namespace turing
 
         public bool oneCmd()
         {
+            if (globalSost == 0) globalSost = 1;
+
             var cVl = GetValue(head)[0];
-            if (cVl == ' ') cVl = '_';
             int indSim = alphabet.Text.IndexOf(cVl);
 
             var comand = (string)progGrid[indSim, globalSost-1].Value;
@@ -266,7 +267,7 @@ namespace turing
 
             if (comand.Length != 4) return false;
 
-            if (comand[0] != 'Q') return false;
+            if (comand[0] != 'q') return false;
 
             var sostString = comand[1].ToString();
                 if (!int.TryParse(sostString, out sost) || sost > KOL_SOST)
