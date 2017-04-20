@@ -7,3 +7,12 @@ C:\Users\Андрей\Desktop\2_semestr\Дискретная математик�
 C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.csproj.GenerateResource.Cache
 C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.exe
 C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.pdb
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.csprojResolveAssemblyReference.cache
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.Form1.resources
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.Properties.Resources.resources
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.csproj.GenerateResource.Cache
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.exe
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.pdb
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Debug\turing.exe.config
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Debug\turing.exe
+D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Debug\turing.pdb

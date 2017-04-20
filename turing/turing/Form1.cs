@@ -28,7 +28,7 @@ namespace turing
 
         const int COLSIZE = 30;
 
-        const int PROG_Y = 4;
+        const int KOL_SOST = 4;
         const int LENT_BEG = -7;
 
 
@@ -36,7 +36,7 @@ namespace turing
         protected int head = 0;
         protected int begn = LENT_BEG;
         protected string ABC = "_";
-
+        protected int globalSost = 1;
 
 
         public Form1()
@@ -58,7 +58,15 @@ namespace turing
                     else lenta.Rows[0].Cells[i].Value = "";
                 lenta.Rows[1].Cells[i].Value = nach + i;
                 lenta.Rows[1].Cells[i].Style.BackColor = Color.MintCream;
-                lenta.Rows[2].Cells[i].Value = GetValue(nach + i);
+
+                var sim = GetValue(nach + i);
+                if (sim != null)
+                    lenta.Rows[2].Cells[i].Value = sim;
+                else
+                {
+                    AddData (" ", nach + i);
+                    lenta.Rows[2].Cells[i].Value = " ";
+                }
             }
 
             for (int i = 0; i < lenta.Rows.Count; i++)
@@ -95,7 +103,7 @@ namespace turing
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ProgGridPrint(PROG_Y);
+            ProgGridPrint(KOL_SOST);
             LentaPrint(begn, head);
             ABC = alphabet.Text;
         }
@@ -107,13 +115,14 @@ namespace turing
 
         private void progGrid_Resize(object sender, EventArgs e)
         {
-            ProgGridPrint(PROG_Y);
+            ProgGridPrint(KOL_SOST);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             head++;
             begn++;
+            lenta.ClearSelection();
             LentaPrint(begn, head);
         }
 
@@ -121,6 +130,7 @@ namespace turing
         {
             head--;
             begn--;
+            lenta.ClearSelection();
             LentaPrint(begn, head);
         }
 
@@ -141,17 +151,18 @@ namespace turing
 
         private void lenta_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            int x = lenta.CurrentCell.RowIndex;
-            int y = lenta.CurrentCell.ColumnIndex;
+            int x = e.RowIndex;
+            if (x != 2) return;
+            int y = e.ColumnIndex;
 
             var cell = lenta.Rows[x].Cells[y];
             var cValue = (string)cell.Value;
 
-            if (cValue.Length > 1) cell.Value = "";
+            if (cValue.Length > 1) cell.Value = " ";
                 else
-                if (!ABC.Contains(cValue)) cell.Value = "";
+                if (!ABC.Contains(cValue)) cell.Value = " ";
 
-            AddData (cValue, begn+y);
+            AddData (cValue, begn + y);
         }
 
         public void AddData(string value, int index)
@@ -165,7 +176,8 @@ namespace turing
                     break;
                 }
 
-            if (memInd > -1) item[memInd] = new cell(value, index);
+            if (memInd > -1 && item[memInd].value != value)
+                item[memInd] = new cell(value, index); 
             else
                 item.Add(new cell(value, index));
         }
@@ -176,8 +188,7 @@ namespace turing
              if (i.index == index)
                return i.value;
 
-            AddData("", index);
-            return "";
+            return null;
         }
 
         private void alphabet_TextChanged(object sender, EventArgs e)
@@ -200,9 +211,99 @@ namespace turing
                     }
                     
             ABC = alphabet.Text;
-            ProgGridPrint(PROG_Y);         
+            ProgGridPrint(KOL_SOST);         
         }
 
-        
+        private void oneStep_Click(object sender, EventArgs e)
+        {
+            oneCmd ();
+            PrintLog();
+        }
+
+        public void PrintLog()
+        {
+            String text = numCmd.Value + ") " + head + " " + globalSost;
+            log.Items.Add (text);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            log.Items.Clear();
+        }
+
+        public bool oneCmd()
+        {
+            var cVl = GetValue(head)[0];
+            if (cVl == ' ') cVl = '_';
+            int indSim = alphabet.Text.IndexOf(cVl);
+
+            var comand = (string)progGrid[indSim, globalSost-1].Value;
+
+            if (comand == null)
+                { MessageBox.Show("Отсутствует команда!"); return false; }
+
+            int sost;
+            string simv;
+            string move;
+            if  (!parseComand(comand, out sost, out simv, out move))
+            {
+                { MessageBox.Show("Неизвестная команда!"); return false; }
+            }
+            else
+            {
+                AddData(simv,head);
+                if (move == "R") button2_Click(null, null);
+                if (move == "L") button1_Click(null, null);
+                globalSost = sost;
+            }
+
+            return true;
+        }
+
+        public bool parseComand(string comand, out int sost, out string simv, out string move)
+        {
+            sost = 0; simv = ""; move = "";
+
+            if (comand.Length != 4) return false;
+
+            if (comand[0] != 'Q') return false;
+
+            var sostString = comand[1].ToString();
+                if (!int.TryParse(sostString, out sost) || sost > KOL_SOST)
+                    return false;
+
+            simv = comand[2].ToString();
+                if (!ABC.Contains(simv))
+                    return false;
+            
+            move = "RCL";
+                if (!move.Contains(comand[3]))
+                    return false;
+                else move = comand[3].ToString();
+
+            return true;       
+        }
+
+        private void allCmd_Click(object sender, EventArgs e)
+        {
+            numCmd.Value = 0;
+            bool check;
+            do
+            {
+                numCmd.Value += 1;
+                check = oneCmd();
+                PrintLog();
+            } while (numCmd.Value < 10000 && check && globalSost != 0);
+            
+            if (numCmd.Value == 10000)
+                MessageBox.Show("Скорее всего программа не применима к данному слову !");
+            else
+            if (!check)
+                MessageBox.Show("Некорректная команда!");
+            else
+                MessageBox.Show("---Программа завершена (Q0)---");
+
+
+        }
     }
 }
