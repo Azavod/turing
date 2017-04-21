@@ -25,18 +25,17 @@ namespace turing
             }
         }
 
-
-        const int COLSIZE = 30;
-
-        const int KOL_SOST = 4;
+        const int COLUMN_SIZE = 30;
         const int LENT_BEG = -7;
-
 
         public List<cell> item = new List<cell>();
         protected int head = 0;
         protected int begn = LENT_BEG;
         protected string ABC = "_";
         protected int globalSost = 1;
+        protected int kolSost = 4;
+
+
 
 
         public Form1()
@@ -46,18 +45,27 @@ namespace turing
 
         public void LentaPrint(int nach, int head)
         {
-            lenta.ColumnCount = lenta.Width / COLSIZE;
+            lenta.ColumnCount = lenta.Width / COLUMN_SIZE;
             lenta.RowCount = 3;
             int konc = nach + lenta.ColumnCount;
             for (int i = 0; i < lenta.ColumnCount; i++)
             {                               
-                lenta.Columns[i].Width = COLSIZE;
+                lenta.Columns[i].Width = COLUMN_SIZE;
                 lenta.Rows[0].Cells[i].ReadOnly = true;
-                lenta.Rows[1].Cells[i].ReadOnly = true;              
-                if ((nach + i) == head) lenta.Rows[0].Cells[i].Value = "\\/";
-                    else lenta.Rows[0].Cells[i].Value = "";
+                lenta.Rows[1].Cells[i].ReadOnly = true;         
                 lenta.Rows[1].Cells[i].Value = nach + i;
-                lenta.Rows[1].Cells[i].Style.BackColor = Color.MintCream;
+                lenta.Rows[0].Cells[i].Style.BackColor = Color.White;
+                lenta.Rows[1].Cells[i].Style.BackColor = Color.MintCream;               
+                lenta.Rows[2].Cells[i].Style.BackColor = Color.White;
+
+                if ((nach + i) == head)
+                {
+                    lenta.Rows[0].Cells[i].Value = "\\/";
+                    lenta.Rows[0].Cells[i].Style.BackColor = Color.LightSalmon;
+                    lenta.Rows[1].Cells[i].Style.BackColor = Color.LightSalmon;
+                    lenta.Rows[2].Cells[i].Style.BackColor = Color.LightSalmon;
+                }
+                else lenta.Rows[0].Cells[i].Value = "";
 
                 var sim = GetValue(nach + i);
                 if (sim != null)
@@ -80,8 +88,8 @@ namespace turing
             var col = progGrid.ColumnCount;
             progGrid.RowCount = row;
 
-            int colSize = (progGrid.Width - progGrid.ColumnHeadersHeight - 2) / col;
-            int rowSize = (progGrid.Height - progGrid.RowHeadersWidth - 2) / row;
+            int colSize = (progGrid.Width - progGrid.RowHeadersWidth-2) / col;
+            int rowSize = (progGrid.Height - progGrid.ColumnHeadersHeight-2) / row;
 
             for (int i = 0; i < progGrid.Columns.Count; i++)
             {
@@ -92,20 +100,21 @@ namespace turing
 
             }
 
+            
             for (int i = 0; i < progGrid.Rows.Count; i++)
             {
-                progGrid.Rows[i].HeaderCell.Value = i;
+                progGrid.Rows[i].HeaderCell.Value = "q" + (i+1);
                 progGrid.Rows[i].Height = rowSize;
-
             }
                 
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ProgGridPrint(KOL_SOST);
+            ProgGridPrint(kolSost);
             LentaPrint(begn, head);
             ABC = alphabet.Text;
+            clearLog_Click(null, null);
         }
 
         private void lenta_Resize(object sender, EventArgs e)
@@ -115,7 +124,7 @@ namespace turing
 
         private void progGrid_Resize(object sender, EventArgs e)
         {
-            ProgGridPrint(KOL_SOST);
+            ProgGridPrint(kolSost);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -211,24 +220,29 @@ namespace turing
                     }
                     
             ABC = alphabet.Text;
-            ProgGridPrint(KOL_SOST);         
+            ProgGridPrint(kolSost);         
         }
 
         private void oneStep_Click(object sender, EventArgs e)
         {
-            oneCmd ();
-            PrintLog();
+            if (oneCmd ()) PrintLog();           
         }
 
         public void PrintLog()
         {
-            String text = numCmd.Value + ") " + head + " " + globalSost;
+            String text = numCmd.Value + ") ";
+            for (int i = head-5; i < head+5; i++)
+            {
+                if (i == head) text += GetValue(i) + "(Q" + globalSost + ")";
+                    else text += GetValue(i);
+            }        
             log.Items.Add (text);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void clearLog_Click(object sender, EventArgs e)
         {
             log.Items.Clear();
+            log.Items.Add("         --- log ---");
         }
 
         public bool oneCmd()
@@ -239,6 +253,8 @@ namespace turing
             int indSim = alphabet.Text.IndexOf(cVl);
 
             var comand = (string)progGrid[indSim, globalSost-1].Value;
+
+            progGrid.CurrentCell = progGrid[indSim, globalSost - 1];
 
             if (comand == null)
                 { MessageBox.Show("Отсутствует команда!"); return false; }
@@ -253,11 +269,12 @@ namespace turing
             else
             {
                 AddData(simv,head);
-                if (move == "R") button2_Click(null, null);
-                if (move == "L") button1_Click(null, null);
+                if (move == "R" || move == ">") button2_Click(null, null);
+                if (move == "L" || move == "<") button1_Click(null, null);
                 globalSost = sost;
             }
 
+            numCmd.Value += 1;
             return true;
         }
 
@@ -267,17 +284,17 @@ namespace turing
 
             if (comand.Length != 4) return false;
 
-            if (comand[0] != 'q') return false;
+            if (!(comand[0] == 'q' || comand[0] == 'Q')) return false;
 
             var sostString = comand[1].ToString();
-                if (!int.TryParse(sostString, out sost) || sost > KOL_SOST)
+                if (!int.TryParse(sostString, out sost) || sost > kolSost)
                     return false;
 
             simv = comand[2].ToString();
                 if (!ABC.Contains(simv))
                     return false;
             
-            move = "RCL";
+            move = "RCL<.>";
                 if (!move.Contains(comand[3]))
                     return false;
                 else move = comand[3].ToString();
@@ -290,21 +307,162 @@ namespace turing
             numCmd.Value = 0;
             bool check;
             do
-            {
-                numCmd.Value += 1;
-                check = oneCmd();
-                PrintLog();
+            {                
+                if (check = oneCmd())
+                    PrintLog();
             } while (numCmd.Value < 10000 && check && globalSost != 0);
             
             if (numCmd.Value == 10000)
                 MessageBox.Show("Скорее всего программа не применима к данному слову !");
             else
-            if (!check)
-                MessageBox.Show("Некорректная команда!");
-            else
+            if (check)
                 MessageBox.Show("---Программа завершена (Q0)---");
 
 
+        }
+
+        private void тест1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            alphabet.Text = "_012";
+            globalSost = 1;
+            head = 0;
+            begn = -7;
+            kolSost = 3;
+
+            item.Clear();
+            AddData ("0", 0);
+            AddData ("0", 1);
+            AddData ("1", 2);
+            AddData ("1", 3);
+            AddData ("2", 4);
+            AddData ("2", 5);
+            AddData ("1", 6);
+            AddData ("1", 7);
+            AddData ("0", 8);
+
+            Form1_Load (null, null);
+
+            progGrid[0, 0].Value = "q01L";
+            progGrid[1, 0].Value = "q31R";
+            progGrid[2, 0].Value = "q12R";
+            progGrid[3, 0].Value = "q30R";
+            progGrid[0, 1].Value = "q02C";
+            progGrid[1, 1].Value = "q22R";
+            progGrid[2, 1].Value = "q10R";
+            progGrid[3, 1].Value = "q21R";
+            progGrid[0, 2].Value = "q00R";
+            progGrid[1, 2].Value = "q22L";
+            progGrid[2, 2].Value = "q32C";
+            progGrid[3, 2].Value = "q12L";
+
+        }
+
+        private void тест2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            alphabet.Text = "_012";
+            globalSost = 1;
+            head = 0;
+            begn = -7;
+            kolSost = 3;
+
+            item.Clear();
+            AddData("0", 0);
+            AddData("1", 1);
+            AddData("2", 2);
+            AddData("0", 3);
+            AddData("1", 4);
+            AddData("2", 5);
+            AddData("0", 6);
+            AddData("1", 7);
+            AddData("2", 8);
+
+            Form1_Load(null, null);
+
+            progGrid[0, 0].Value = "q01L";
+            progGrid[1, 0].Value = "q31R";
+            progGrid[2, 0].Value = "q12R";
+            progGrid[3, 0].Value = "q30R";
+            progGrid[0, 1].Value = "q02C";
+            progGrid[1, 1].Value = "q22R";
+            progGrid[2, 1].Value = "q10R";
+            progGrid[3, 1].Value = "q21R";
+            progGrid[0, 2].Value = "q00R";
+            progGrid[1, 2].Value = "q22L";
+            progGrid[2, 2].Value = "q32C";
+            progGrid[3, 2].Value = "q12L";
+
+        }
+
+        private void тест3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            alphabet.Text = "_012";
+            globalSost = 1;
+            head = 0;
+            begn = -7;
+            kolSost = 3;
+
+            item.Clear();
+            AddData("0", 0);
+            AddData("0", 1);
+            AddData("1", 2);
+            AddData("1", 3);
+            AddData("2", 4);
+            AddData("2", 5);
+            AddData("1", 6);
+            AddData("1", 7);
+            AddData("0", 8);
+
+            Form1_Load(null, null);
+
+            progGrid[0, 0].Value = "q01L";
+            progGrid[1, 0].Value = "q31R";
+            progGrid[2, 0].Value = "q12R";
+            progGrid[3, 0].Value = "q30R";
+            progGrid[0, 1].Value = "q22C";
+            progGrid[1, 1].Value = "q22R";
+            progGrid[2, 1].Value = "q10R";
+            progGrid[3, 1].Value = "q21R";
+            progGrid[0, 2].Value = "q00R";
+            progGrid[1, 2].Value = "q22L";
+            progGrid[2, 2].Value = "q32C";
+            progGrid[3, 2].Value = "q12L";
+        }
+
+        private void тест4ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            alphabet.Text = "_012";
+            globalSost = 1;
+            head = 0;
+            begn = -7;
+            kolSost = 3;
+
+            item.Clear();
+            AddData("0", 0);
+            AddData("0", 1);
+            AddData("1", 2);
+            AddData("1", 3);
+            AddData("2", 4);
+            AddData("2", 5);
+            AddData("1", 6);
+            AddData("1", 7);
+            AddData("0", 8);
+
+            Form1_Load(null, null);
+
+            progGrid[0, 0].Value = "q01L";
+            progGrid[1, 0].Value = "q31R";
+            progGrid[2, 0].Value = "q12R";
+            progGrid[3, 0].Value = "q30R";
+            progGrid[0, 1].Value = "q20L";
+            progGrid[1, 1].Value = "q22R";
+            progGrid[2, 1].Value = "q10R";
+            progGrid[3, 1].Value = "q21R";
+            progGrid[0, 2].Value = "q00R";
+            progGrid[1, 2].Value = "q22L";
+            progGrid[2, 2].Value = "q32C";
+            progGrid[3, 2].Value = "q12L";
         }
     }
 }
