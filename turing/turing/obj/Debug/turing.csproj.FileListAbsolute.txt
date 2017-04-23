@@ -16,3 +16,5 @@ D:\2_semestr\Дискретная математика\Машина Тьюрин
 D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Debug\turing.exe.config
 D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Debug\turing.exe
 D:\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\bin\Debug\turing.pdb
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.Author.resources
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Debug\turing.Instructions.resources

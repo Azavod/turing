@@ -26,7 +26,7 @@ namespace turing
         }
 
         const int COLUMN_SIZE = 30;
-        const int LENT_BEG = -7;
+        const int LENT_BEG = -7;        
 
         public List<cell> item = new List<cell>();
         protected int head = 0;
@@ -35,7 +35,9 @@ namespace turing
         protected int globalSost = 1;
         protected int kolSost = 4;
 
-
+        public cell[] saveWord;
+        protected int saveHead;
+        protected int saveBegn;
 
 
         public Form1()
@@ -82,14 +84,14 @@ namespace turing
 
         }
 
-        public void ProgGridPrint(int row)
+        public void ProgGridPrint()
         {
             progGrid.ColumnCount = alphabet.Text.Length;
             var col = progGrid.ColumnCount;
-            progGrid.RowCount = row;
+            progGrid.RowCount = kolSost;
 
             int colSize = (progGrid.Width - progGrid.RowHeadersWidth-2) / col;
-            int rowSize = (progGrid.Height - progGrid.ColumnHeadersHeight-2) / row;
+            int rowSize = (progGrid.Height - progGrid.ColumnHeadersHeight-2) / kolSost;
 
             for (int i = 0; i < progGrid.Columns.Count; i++)
             {
@@ -109,9 +111,9 @@ namespace turing
                 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        protected void Form1_Load(object sender, EventArgs e)
         {
-            ProgGridPrint(kolSost);
+            ProgGridPrint();
             LentaPrint(begn, head);
             ABC = alphabet.Text;
             clearLog_Click(null, null);
@@ -124,7 +126,7 @@ namespace turing
 
         private void progGrid_Resize(object sender, EventArgs e)
         {
-            ProgGridPrint(kolSost);
+            ProgGridPrint();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -220,20 +222,21 @@ namespace turing
                     }
                     
             ABC = alphabet.Text;
-            ProgGridPrint(kolSost);         
+            ProgGridPrint();         
         }
 
         private void oneStep_Click(object sender, EventArgs e)
         {
-            if (oneCmd ()) PrintLog();           
+            oneCmd ();           
         }
 
-        public void PrintLog()
+        public void PrintLog(string comand)
         {
-            String text = numCmd.Value + ") ";
+            String text = numCmd.Value + ") [" + comand + "] ";
+            if (numCmd.Value < 10) text = " " + text;
             for (int i = head-5; i < head+5; i++)
             {
-                if (i == head) text += GetValue(i) + "(Q" + globalSost + ")";
+                if (i == head) text += GetValue(i) + "[Q" + globalSost + "]";
                     else text += GetValue(i);
             }        
             log.Items.Add (text);
@@ -242,7 +245,7 @@ namespace turing
         private void clearLog_Click(object sender, EventArgs e)
         {
             log.Items.Clear();
-            log.Items.Add("         --- log ---");
+            log.Items.Add("log :");
         }
 
         public bool oneCmd()
@@ -257,14 +260,14 @@ namespace turing
             progGrid.CurrentCell = progGrid[indSim, globalSost - 1];
 
             if (comand == null)
-                { MessageBox.Show("Отсутствует команда!"); return false; }
+                { log.Items.Add("Отсутствует команда!"); return false; }
 
             int sost;
             string simv;
             string move;
             if  (!parseComand(comand, out sost, out simv, out move))
             {
-                { MessageBox.Show("Неизвестная команда!"); return false; }
+                { log.Items.Add("Неизвестная команда!"); return false; }
             }
             else
             {
@@ -275,6 +278,7 @@ namespace turing
             }
 
             numCmd.Value += 1;
+            PrintLog(comand);
             return true;
         }
 
@@ -294,7 +298,7 @@ namespace turing
                 if (!ABC.Contains(simv))
                     return false;
             
-            move = "RCL<.>";
+            move = "RCLrcl<.>";
                 if (!move.Contains(comand[3]))
                     return false;
                 else move = comand[3].ToString();
@@ -307,18 +311,18 @@ namespace turing
             numCmd.Value = 0;
             bool check;
             do
-            {                
-                if (check = oneCmd())
-                    PrintLog();
+            {
+                check = oneCmd();
+                                
             } while (numCmd.Value < 10000 && check && globalSost != 0);
             
             if (numCmd.Value == 10000)
                 MessageBox.Show("Скорее всего программа не применима к данному слову !");
             else
             if (check)
-                MessageBox.Show("---Программа завершена (Q0)---");
+                log.Items.Add("---Программа завершена (Q0)---");
 
-
+            numCmd.Value = 0;
         }
 
         private void тест1ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -331,17 +335,17 @@ namespace turing
             kolSost = 3;
 
             item.Clear();
-            AddData ("0", 0);
-            AddData ("0", 1);
-            AddData ("1", 2);
-            AddData ("1", 3);
-            AddData ("2", 4);
-            AddData ("2", 5);
-            AddData ("1", 6);
-            AddData ("1", 7);
-            AddData ("0", 8);
+            AddData("0", 0);
+            AddData("0", 1);
+            AddData("1", 2);
+            AddData("1", 3);
+            AddData("2", 4);
+            AddData("2", 5);
+            AddData("1", 6);
+            AddData("1", 7);
+            AddData("0", 8);
 
-            Form1_Load (null, null);
+            Form1_Load(null, null);
 
             progGrid[0, 0].Value = "q01L";
             progGrid[1, 0].Value = "q31R";
@@ -463,6 +467,99 @@ namespace turing
             progGrid[1, 2].Value = "q22L";
             progGrid[2, 2].Value = "q32C";
             progGrid[3, 2].Value = "q12L";
+        }
+
+        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void обАвтореToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Author author = new Author();
+            author.Show();
+        }
+
+        private void инструкцииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Instructions instructions = new Instructions();
+            instructions.Show();
+        }
+
+        private void цветФонаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            colorDialog.ShowDialog();
+            this.BackColor = colorDialog.Color;
+        }
+
+        private void очиститьLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            clearLog_Click(null, null);
+        }
+
+        private void шрифтToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fontDialog.ShowDialog();
+            this.Font = fontDialog.Font;
+        }
+
+        private void AddQ_Click(object sender, EventArgs e)
+        {
+            if (kolSost < 9)
+            {
+                this.kolSost++;
+                ProgGridPrint();
+            }
+             
+        }
+
+        private void SubQ_Click(object sender, EventArgs e)
+        {
+            if (kolSost > 4)
+            {
+                this.kolSost--;
+                ProgGridPrint();
+            }               
+        }
+
+        private void loadWord_Click(object sender, EventArgs e)
+        {
+            if (saveWord != null)
+            {
+                item.Clear();
+                foreach (var i in saveWord)
+                {
+                    item.Add(i);
+                }
+                log.Items.Add("Слово успешно загружено!");
+                begn = saveBegn;
+                head = saveHead;
+                LentaPrint(begn, head);
+            }
+            else
+            {
+                log.Items.Add("Отсутствует сохраненное слово!");
+            }
+            
+        }
+
+        private void saveWrd_Click(object sender, EventArgs e)
+        {
+            saveWord = new cell[item.Count];
+            item.CopyTo(saveWord);
+            saveBegn = begn;
+            saveHead = head;
+            log.Items.Add("Слово успешно сохранено!");
+        }
+
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveWrd_Click(null,null);
+        }
+
+        private void загрузитьToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            loadWord_Click(null, null);
         }
     }
 }

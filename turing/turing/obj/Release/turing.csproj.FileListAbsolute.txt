@@ -7,3 +7,5 @@ C:\Users\Андрей\Desktop\2_semestr\Дискретная математик�
 C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.csproj.GenerateResource.Cache
 C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.exe
 C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.pdb
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.Author.resources
+C:\Users\Андрей\Desktop\2_semestr\Дискретная математика\Машина Тьюринга\turing\turing\turing\obj\Release\turing.Instructions.resources
