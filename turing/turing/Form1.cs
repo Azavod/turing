@@ -308,21 +308,27 @@ namespace turing
 
         private void allCmd_Click(object sender, EventArgs e)
         {
+            progressBar.Value = 0; 
+            progressBar.Visible = true;                  
             numCmd.Value = 0;
             bool check;
             do
             {
                 check = oneCmd();
+                progressBar.Value = (int)((numCmd.Value / maxCmd.Value) * 100);
                                 
-            } while (numCmd.Value < 10000 && check && globalSost != 0);
-            
-            if (numCmd.Value == 10000)
-                MessageBox.Show("Скорее всего программа не применима к данному слову !");
+            } while (numCmd.Value < maxCmd.Value - 1 && check && globalSost != 0);
+
+            progressBar.Value = 100;
+
+            if (numCmd.Value == maxCmd.Value)
+                MessageBox.Show("Выполнено запланированное количество команд!");
             else
             if (check)
                 log.Items.Add("---Программа завершена (Q0)---");
 
             numCmd.Value = 0;
+            progressBar.Visible = false;
         }
 
         private void тест1ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -515,7 +521,7 @@ namespace turing
 
         private void SubQ_Click(object sender, EventArgs e)
         {
-            if (kolSost > 4)
+            if (kolSost > 3)
             {
                 this.kolSost--;
                 ProgGridPrint();
@@ -560,6 +566,18 @@ namespace turing
         private void загрузитьToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             loadWord_Click(null, null);
+        }
+
+        private void maxCmd_ValueChanged(object sender, EventArgs e)
+        {
+            if (maxCmd.Value <= numCmd.Value)
+                numCmd.Value = maxCmd.Value - 1;
+        }
+
+        private void numCmd_ValueChanged(object sender, EventArgs e)
+        {
+            if (numCmd.Value >= maxCmd.Value)
+                maxCmd.Value = numCmd.Value + 1;
         }
     }
 }
